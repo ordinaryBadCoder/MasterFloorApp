@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -22,16 +23,20 @@ namespace MasterFloorApp
     /// </summary>
     public partial class ChangeListPartners : Window
     {
-        public ChangeListPartners(int SelectedPartner)
+        private readonly int SelectedPartner;
+        public ChangeListPartners(int SP)
         {
             InitializeComponent();
-           
+
+            SelectedPartner = SP;
+
             if (SelectedPartner == 0) // Если открыто добавление партнёра
             {
                 LoadTypePartner(); // Мы просто подгружаем ComboBox для выбора
             }
             else // Если открыто редактирование партнёра
             {
+                LoadTypePartner();
                 LoadPartnerForEdit(SelectedPartner); // Подгружаем информацию о соответствующем партнере
             }
         }
@@ -42,7 +47,33 @@ namespace MasterFloorApp
         /// <param name="SelectedPartner"></param>
         private void LoadPartnerForEdit(int SelectedPartner)
         {
+            try
+            {
+                using (var dbContext = new MasterFloorEntity())
+                {
+                    // Поиск партнера по выбранному id
+                    var Partner = dbContext.Partners
+                                           .FirstOrDefault(p => p.id == SelectedPartner);
+                    //Загрузка полученных данных в интерфейс
+                    NamePartnerBox.Text = Partner.namePartner;
+                    TypePartnerBox.SelectedValue = Partner.idPartnerType;
+                    RateBox.Text = Convert.ToString(Partner.rate);
+                    AddressBox.Text = Partner.address;
+                    DirectorNameBox.Text = Partner.directorName;
+                    PhoneBox.Text = Partner.phone;
+                    EmailBox.Text = Partner.email;
 
+                }
+            }
+            catch
+            {
+                // Обработка исключения, диалог с пользователем
+                MessageBox.Show(
+                    $"Произошла ошибка загрузки данных о партнёре. Обратитесь к системному администратору.", // Текст сообщения
+                    "Ошибка", // Заголовок окна
+                    MessageBoxButton.OK, // Кнопка 
+                    MessageBoxImage.Error); // Пентаграмма
+            }
         }
 
 
@@ -94,27 +125,31 @@ namespace MasterFloorApp
             {
                 if (TextValidation())
                 {
-                    using(var dbContext = new MasterFloorEntity())
+                    //Если запущено как окно добавления нового партнера
+                    if (SelectedPartner == 0)
                     {
-                        // Сбор данных из формы
-                        Partners partner = new Partners() 
-                        { 
-                            namePartner = NamePartnerBox.Text,
-                            idPartnerType = Convert.ToInt32(TypePartnerBox.SelectedValue),
-                            rate = Convert.ToInt32(RateBox.Text),
-                            address = AddressBox.Text,
-                            directorName = DirectorNameBox.Text,
-                            phone = PhoneBox.Text,
-                            email = EmailBox.Text
-                        };
+                        using (var dbContext = new MasterFloorEntity())
+                        {
+                            // Сбор данных из формы
+                            Partners partner = new Partners()
+                            {
+                                namePartner = NamePartnerBox.Text,
+                                idPartnerType = Convert.ToInt32(TypePartnerBox.SelectedValue),
+                                rate = Convert.ToInt32(RateBox.Text),
+                                address = AddressBox.Text,
+                                directorName = DirectorNameBox.Text,
+                                phone = PhoneBox.Text,
+                                email = EmailBox.Text
+                            };
 
-                        dbContext.Partners.Add(partner); // добавляем запись в базу данных
-                        dbContext.SaveChanges(); // сохраняем изменения
+                            dbContext.Partners.Add(partner); // добавляем запись в базу данных
 
+                            dbContext.SaveChanges(); // сохраняем изменения                       
+                        }
                         MessageBox.Show($"Новый партнёр успешно добавлен.", // Текст сообщения
-                              "Успех!", // Заголовок окна
-                              MessageBoxButton.OK, // Кнопка 
-                              MessageBoxImage.Information); // Пентаграмма
+                                  "Успех!", // Заголовок окна
+                                  MessageBoxButton.OK, // Кнопка 
+                                  MessageBoxImage.Information); // Пентаграмма
 
                         // Очистка полей 
                         NamePartnerBox.Text = string.Empty;
@@ -124,6 +159,31 @@ namespace MasterFloorApp
                         DirectorNameBox.Text = string.Empty;
                         PhoneBox.Text = string.Empty;
                         EmailBox.Text = string.Empty;
+                    }
+                    else // Если SelectedPartner не равен 0, т.е. открыто редактирование
+                    {
+                        using (var dbContext = new MasterFloorEntity())
+                        {
+                            // Поиск партнера по выбранному id
+                            var Partner = dbContext.Partners
+                                           .FirstOrDefault(p => p.id == SelectedPartner);
+                            //Вставка изменений
+                            Partner.namePartner = NamePartnerBox.Text;
+                            Partner.idPartnerType = Convert.ToInt32(TypePartnerBox.SelectedValue);
+                            Partner.rate = Convert.ToInt32(RateBox.Text);
+                            Partner.address = AddressBox.Text;
+                            Partner.directorName = DirectorNameBox.Text;
+                            Partner.phone = PhoneBox.Text;
+                            Partner.email = EmailBox.Text;
+
+                            dbContext.SaveChanges(); // сохраняем изменения  
+
+                        }
+
+                        MessageBox.Show($"Данные о партнере успешно обновлены!", // Текст сообщения
+                                "Успех!", // Заголовок окна
+                                MessageBoxButton.OK, // Кнопка 
+                                MessageBoxImage.Information); // Пентаграмма
                     }
                 }
                 else

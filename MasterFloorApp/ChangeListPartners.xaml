@@ -128,11 +128,12 @@
                  Grid.Row="4"
                  Grid.Column="1"
                  Width="350"
-                 Height="30"
+                 Height="auto"
+                 TextWrapping="Wrap"
                  VerticalAlignment="Center"
                  HorizontalAlignment="Center"
                  FontFamily="Segoe UI"
-                 FontSize="20"/>
+                 FontSize="15"/>
 
         <!--Поле для ввода ФИО дректора организации-->
         <TextBlock Grid.Row="5"
