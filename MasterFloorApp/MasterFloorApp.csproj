@@ -131,5 +131,8 @@
     <Resource Include="Resources\MasterFloorIco.ico" />
     <Resource Include="Resources\MasterFloorLogo.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataBase + ER Diagramm\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
