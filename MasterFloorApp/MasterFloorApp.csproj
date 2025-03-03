@@ -68,6 +68,7 @@
       <DependentUpon>ChangeListPartners.xaml</DependentUpon>
     </Compile>
     <Compile Include="MasterFloorEntity\sysdiagrams.cs" />
+    <Compile Include="MaterialQuantityCalculation.cs" />
     <Compile Include="SalesHistory.xaml.cs">
       <DependentUpon>SalesHistory.xaml</DependentUpon>
     </Compile>
