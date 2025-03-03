@@ -102,6 +102,37 @@ namespace MasterFloorApp
 
             LoadPartnerList();
         }
-      
+
+        private void CheckHistory_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                //Если выбран какой-либо индекс в листе, который не равен -1, 
+                //то есть выбран какой-либо объект
+                if (listPartners.SelectedIndex != -1)
+                {
+                    int SelectedPartner = (int)listPartners.SelectedValue;
+
+                    SalesHistory salesHistory = new SalesHistory(SelectedPartner);
+                    salesHistory.ShowDialog();
+                }
+                else
+                {
+                    // Сообщение для пользователя
+                    MessageBox.Show($"Выберите партнера в списке для просмотра истории.", // Текст сообщения
+                                     "Не выбран объект", // Заголовок окна
+                                     MessageBoxButton.OK, // Кнопка 
+                                     MessageBoxImage.Exclamation); // Пентаграмма
+                }
+            }
+            catch
+            {
+                // Обработка исключения, диалог с пользователем
+                MessageBox.Show($"Произошла ошибка обработки запроса. Обратитесь к системному администратору.", // Текст сообщения
+                                "Ошибка", // Заголовок окна
+                                MessageBoxButton.OK, // Кнопка 
+                                MessageBoxImage.Error); // Пентаграмма
+            }
+        }
     }
 }

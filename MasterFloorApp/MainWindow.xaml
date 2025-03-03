@@ -155,6 +155,21 @@
                            TextWrapping="Wrap"
                            Foreground="White"/>                
             </Button>
+            
+            <!--Кнопка для просмотра истории реализации-->
+            <Button x:Name="CheckHistory"
+                    Background="#67BA80"
+                    BorderThickness="0"
+                    Width="350"
+                    Height="50"
+                    Margin="10"
+                    Click="CheckHistory_Click">
+                <TextBlock Text="Посмотреть историю реализации"
+                           FontFamily="Segoe UI"
+                           FontSize="20"
+                           TextWrapping="Wrap"
+                           Foreground="White"/>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>
